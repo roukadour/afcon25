@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AFCON 2025 Bracket Predictor</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>AFCON 2025 Bracket Predictor</h1>
+
+    <div class="groups">
+        <h2>Group Stage</h2>
+        <div class="group-container">
+            <!-- Group A -->
+            <div class="group">
+                <h3>Group A</h3>
+                <label><input type="checkbox" class="team" data-team="Morocco"> Morocco</label>
+                <label><input type="checkbox" class="team" data-team="Mali"> Mali</label>
+                <label><input type="checkbox" class="team" data-team="Zambia"> Zambia</label>
+                <label><input type="checkbox" class="team" data-team="Comoros"> Comoros</label>
+            </div>
+            <!-- Group B -->
+            <div class="group">
+                <h3>Group B</h3>
+                <label><input type="checkbox" class="team" data-team="Egypt"> Egypt</label>
+                <label><input type="checkbox" class="team" data-team="South Africa"> South Africa</label>
+                <label><input type="checkbox" class="team" data-team="Angola"> Angola</label>
+                <label><input type="checkbox" class="team" data-team="Zimbabwe"> Zimbabwe</label>
+            </div>
+            <!-- Group C -->
+            <div class="group">
+                <h3>Group C</h3>
+                <label><input type="checkbox" class="team" data-team="Nigeria"> Nigeria</label>
+                <label><input type="checkbox" class="team" data-team="Tunisia"> Tunisia</label>
+                <label><input type="checkbox" class="team" data-team="Uganda"> Uganda</label>
+                <label><input type="checkbox" class="team" data-team="Tanzania"> Tanzania</label>
+            </div>
+            <!-- Group D -->
+            <div class="group">
+                <h3>Group D</h3>
+                <label><input type="checkbox" class="team" data-team="Senegal"> Senegal</label>
+                <label><input type="checkbox" class="team" data-team="DR Congo"> DR Congo</label>
+                <label><input type="checkbox" class="team" data-team="Benin"> Benin</label>
+                <label><input type="checkbox" class="team" data-team="Botswana"> Botswana</label>
+            </div>
+            <!-- Group E -->
+            <div class="group">
+                <h3>Group E</h3>
+                <label><input type="checkbox" class="team" data-team="Algeria"> Algeria</label>
+                <label><input type="checkbox" class="team" data-team="Burkina Faso"> Burkina Faso</label>
+                <label><input type="checkbox" class="team" data-team="Equatorial Guinea"> Equatorial Guinea</label>
+                <label><input type="checkbox" class="team" data-team="Sudan"> Sudan</label>
+            </div>
+            <!-- Group F -->
+            <div class="group">
+                <h3>Group F</h3>
+                <label><input type="checkbox" class="team" data-team="Ivory Coast"> Ivory Coast</label>
+                <label><input type="checkbox" class="team" data-team="Cameroon"> Cameroon</label>
+                <label><input type="checkbox" class="team" data-team="Gabon"> Gabon</label>
+                <label><input type="checkbox" class="team" data-team="Mozambique"> Mozambique</label>
+            </div>
+        </div>
+    </div>
+
+    <button id="generateBracket">Generate Knockouts</button>
+
+    <div id="knockout-stage" class="hidden">
+        <h2>Knockout Stage</h2>
+        <div class="bracket">
+            <div id="round16" class="round">Round of 16</div>
+            <div id="quarterfinals" class="round">Quarterfinals</div>
+            <div id="semifinals" class="round">Semifinals</div>
+            <div id="final" class="round">Final</div>
+        </div>
+        <button id="saveImage">Save as Image</button>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
