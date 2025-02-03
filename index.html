@@ -3,78 +3,113 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AFCON 2025 Bracket Predictor</title>
-    <link rel="stylesheet" href="style.css">
+    <title>AFCON 2025 Simulator</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Flag icons library -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@6.6.6/css/flag-icons.min.css">
 </head>
 <body>
-    <h1>AFCON 2025 Bracket Predictor</h1>
+    <header>
+        <h1>TotalEnergies AFCON 2025 Morocco</h1>
+        <nav>
+            <button class="active" data-section="groups">Group Stage</button>
+            <button data-section="knockout">Knockout Simulator</button>
+        </nav>
+    </header>
 
-    <div class="groups">
-        <h2>Group Stage</h2>
-        <div class="group-container">
-            <!-- Group A -->
-            <div class="group">
-                <h3>Group A</h3>
-                <label><input type="checkbox" class="team" data-team="Morocco"> Morocco</label>
-                <label><input type="checkbox" class="team" data-team="Mali"> Mali</label>
-                <label><input type="checkbox" class="team" data-team="Zambia"> Zambia</label>
-                <label><input type="checkbox" class="team" data-team="Comoros"> Comoros</label>
-            </div>
-            <!-- Group B -->
-            <div class="group">
-                <h3>Group B</h3>
-                <label><input type="checkbox" class="team" data-team="Egypt"> Egypt</label>
-                <label><input type="checkbox" class="team" data-team="South Africa"> South Africa</label>
-                <label><input type="checkbox" class="team" data-team="Angola"> Angola</label>
-                <label><input type="checkbox" class="team" data-team="Zimbabwe"> Zimbabwe</label>
-            </div>
-            <!-- Group C -->
-            <div class="group">
-                <h3>Group C</h3>
-                <label><input type="checkbox" class="team" data-team="Nigeria"> Nigeria</label>
-                <label><input type="checkbox" class="team" data-team="Tunisia"> Tunisia</label>
-                <label><input type="checkbox" class="team" data-team="Uganda"> Uganda</label>
-                <label><input type="checkbox" class="team" data-team="Tanzania"> Tanzania</label>
-            </div>
-            <!-- Group D -->
-            <div class="group">
-                <h3>Group D</h3>
-                <label><input type="checkbox" class="team" data-team="Senegal"> Senegal</label>
-                <label><input type="checkbox" class="team" data-team="DR Congo"> DR Congo</label>
-                <label><input type="checkbox" class="team" data-team="Benin"> Benin</label>
-                <label><input type="checkbox" class="team" data-team="Botswana"> Botswana</label>
-            </div>
-            <!-- Group E -->
-            <div class="group">
-                <h3>Group E</h3>
-                <label><input type="checkbox" class="team" data-team="Algeria"> Algeria</label>
-                <label><input type="checkbox" class="team" data-team="Burkina Faso"> Burkina Faso</label>
-                <label><input type="checkbox" class="team" data-team="Equatorial Guinea"> Equatorial Guinea</label>
-                <label><input type="checkbox" class="team" data-team="Sudan"> Sudan</label>
-            </div>
-            <!-- Group F -->
-            <div class="group">
-                <h3>Group F</h3>
-                <label><input type="checkbox" class="team" data-team="Ivory Coast"> Ivory Coast</label>
-                <label><input type="checkbox" class="team" data-team="Cameroon"> Cameroon</label>
-                <label><input type="checkbox" class="team" data-team="Gabon"> Gabon</label>
-                <label><input type="checkbox" class="team" data-team="Mozambique"> Mozambique</label>
-            </div>
-        </div>
-    </div>
+    <main>
+        <!-- Group Stage Section -->
+        <section id="groups" class="active-section">
+            <h2>Group Stage Draw</h2>
+            <div class="groups-container">
+                <!-- Group A -->
+                <article class="group">
+                    <h3>Group A</h3>
+                    <div class="teams">
+                        <div class="team">
+                            <span class="fi fi-ma"></span>
+                            Morocco
+                        </div>
+                        <div class="team">
+                            <span class="fi fi-ml"></span>
+                            Mali
+                        </div>
+                        <div class="team">
+                            <span class="fi fi-zm"></span>
+                            Zambia
+                        </div>
+                        <div class="team">
+                            <span class="fi fi-km"></span>
+                            Comoros
+                        </div>
+                    </div>
+                </article>
 
-    <button id="generateBracket">Generate Knockouts</button>
+                <!-- Repeat for Groups B-F -->
+                <!-- [Similar structure for other groups] -->
+                
+            </div>
+        </section>
 
-    <div id="knockout-stage" class="hidden">
-        <h2>Knockout Stage</h2>
-        <div class="bracket">
-            <div id="round16" class="round">Round of 16</div>
-            <div id="quarterfinals" class="round">Quarterfinals</div>
-            <div id="semifinals" class="round">Semifinals</div>
-            <div id="final" class="round">Final</div>
-        </div>
-        <button id="saveImage">Save as Image</button>
-    </div>
+        <!-- Knockout Stage Section -->
+        <section id="knockout">
+            <h2>Knockout Stage Simulator</h2>
+            <div class="bracket">
+                <!-- Round of 16 -->
+                <div class="round">
+                    <h3>Round of 16</h3>
+                    <div class="matches">
+                        <!-- Match 1 -->
+                        <div class="match">
+                            <div class="team" data-group="A" data-position="1">
+                                <span class="fi fi-ma"></span>
+                                Winner Group A
+                            </div>
+                            <div class="vs">vs</div>
+                            <div class="team" data-group="C" data-position="3">
+                                <span class="fi fi-ug"></span>
+                                3rd Group C
+                            </div>
+                        </div>
+                        
+                        <!-- Other Round of 16 matches -->
+                        <!-- [Similar structure for other matches] -->
+                    </div>
+                </div>
+
+                <!-- Quarter-finals -->
+                <div class="round">
+                    <h3>Quarter-finals</h3>
+                    <div class="matches">
+                        <!-- Match slots will be populated by winners from Round of 16 -->
+                    </div>
+                </div>
+
+                <!-- Semi-finals -->
+                <div class="round">
+                    <h3>Semi-finals</h3>
+                    <div class="matches">
+                        <!-- Match slots will be populated by winners from Quarter-finals -->
+                    </div>
+                </div>
+
+                <!-- Final -->
+                <div class="round">
+                    <h3>Final</h3>
+                    <div class="matches">
+                        <div class="match final">
+                            <!-- Champion will be populated here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="controls">
+                <button id="reset">Reset Simulation</button>
+                <button id="share">Share Results</button>
+            </div>
+        </section>
+    </main>
 
     <script src="script.js"></script>
 </body>
