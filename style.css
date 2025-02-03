@@ -223,3 +223,26 @@ button#share:hover {
     text-align: center;
     font-weight: bold;
 }
+
+/* Add these CSS styles */
+.group .teams {
+    cursor: move;
+    user-select: none;
+}
+
+.team.dragging {
+    opacity: 0.5;
+    background: var(--primary-green);
+    color: white;
+}
+
+.lock-groups {
+    text-align: center;
+    margin: 20px 0;
+}
+
+#proceedMessage {
+    color: var(--primary-red);
+    margin-top: 10px;
+    display: none;
+}
