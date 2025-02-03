@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Tournament Configuration
     const groups = {
         'A': ['Morocco', 'Mali', 'Zambia', 'Comoros'],
         'B': ['Egypt', 'South Africa', 'Angola', 'Zimbabwe'],
@@ -23,81 +22,80 @@ document.addEventListener('DOMContentLoaded', () => {
     let thirdPlaceQualifiers = [];
 
     // Initialization
-    function initializeTournament() {
-        initializeGroups();
+    function init() {
+        createGroups();
+        setupSortable();
         setupEventListeners();
-        setupGroupSorting();
-        createLockButton();
     }
 
-    function initializeGroups() {
-        document.querySelectorAll('.group').forEach(groupEl => {
-            const groupId = groupEl.querySelector('h3').textContent.split(' ')[1];
-            const teams = groupEl.querySelectorAll('.team');
-            
-            teams.forEach((teamEl, index) => {
-                const teamName = groups[groupId][index];
-                teamEl.querySelector('.fi').className = `fi fi-${countryCodes[teamName]}`;
-                teamEl.childNodes[2].textContent = teamName;
-                teamEl.dataset.position = index + 1;
-            });
-        });
+    function createGroups() {
+        const container = document.querySelector('.groups-container');
+        container.innerHTML = Object.keys(groups).map(groupId => `
+            <article class="group">
+                <h3>Group ${groupId}</h3>
+                <div class="teams">
+                    ${groups[groupId].map(team => `
+                        <div class="team">
+                            <span class="fi fi-${countryCodes[team]}"></span>
+                            ${team}
+                        </div>
+                    `).join('')}
+                </div>
+            </article>
+        `).join('');
     }
 
-    // Group Stage Functionality
-    function setupGroupSorting() {
-        document.querySelectorAll('.group .teams').forEach(teamsContainer => {
-            new Sortable(teamsContainer, {
+    function setupSortable() {
+        document.querySelectorAll('.teams').forEach(teams => {
+            new Sortable(teams, {
                 animation: 150,
-                disabled: groupsLocked,
-                onChoose: (evt) => evt.item.classList.add('dragging'),
-                onUnchoose: (evt) => evt.item.classList.remove('dragging'),
+                ghostClass: 'dragging',
                 onEnd: (evt) => {
                     const groupId = evt.to.closest('.group').querySelector('h3').textContent.split(' ')[1];
                     groups[groupId] = Array.from(evt.to.children).map(team => 
-                        team.childNodes[2].textContent.trim()
+                        team.textContent.trim().replace(/\n/g, '')
                     );
-                    updateGroupPositions();
                 }
             });
         });
     }
 
-    function updateGroupPositions() {
-        document.querySelectorAll('.group').forEach(groupEl => {
-            const groupId = groupEl.querySelector('h3').textContent.split(' ')[1];
-            groupEl.querySelectorAll('.team').forEach((teamEl, index) => {
-                teamEl.dataset.position = index + 1;
+    function setupEventListeners() {
+        // Navigation
+        document.querySelectorAll('nav button').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelector('.active-section').classList.remove('active-section');
+                document.querySelector('button.active').classList.remove('active');
+                document.getElementById(btn.dataset.section).classList.add('active-section');
+                btn.classList.add('active');
             });
         });
-    }
 
-    function createLockButton() {
-        const lockButton = document.createElement('button');
-        lockButton.id = 'lockGroups';
-        lockButton.textContent = 'Lock Groups & Proceed to Knockout';
-        
-        lockButton.addEventListener('click', () => {
+        // Lock Groups
+        document.getElementById('lockGroups').addEventListener('click', () => {
             if (validateGroups()) {
                 groupsLocked = true;
                 document.querySelectorAll('.teams').forEach(teams => 
                     Sortable.get(teams).option('disabled', true)
                 );
-                lockButton.remove();
-                document.getElementById('proceedMessage').remove();
-                prepareKnockoutStage();
+                document.getElementById('proceedMessage').style.display = 'none';
+                initKnockoutStage();
                 document.querySelector('[data-section="knockout"]').click();
             } else {
                 document.getElementById('proceedMessage').style.display = 'block';
             }
         });
 
-        const message = document.createElement('div');
-        message.id = 'proceedMessage';
-        message.textContent = 'Please rank all teams in every group before proceeding!';
-        message.style.display = 'none';
-        
-        document.querySelector('#groups').append(lockButton, message);
+        // Reset
+        document.getElementById('reset').addEventListener('click', () => {
+            groupsLocked = false;
+            currentSelections.clear();
+            init();
+            document.querySelector('[data-section="groups"]').click();
+        });
+
+        // Share
+        document.getElementById('share').addEventListener('click', shareBracket);
     }
 
     function validateGroups() {
@@ -106,146 +104,134 @@ document.addEventListener('DOMContentLoaded', () => {
         );
     }
 
-    // Knockout Stage Functionality
-    function prepareKnockoutStage() {
-        determineThirdPlaceQualifiers();
-        initializeKnockoutMatches();
+    function initKnockoutStage() {
+        determineThirdPlace();
+        createBracket();
         setupKnockoutListeners();
     }
 
-    function determineThirdPlaceQualifiers() {
-        const allThirdPlaces = Object.keys(groups).map(groupId => ({
-            group: groupId,
-            team: groups[groupId][2],
-            points: Math.floor(Math.random() * 7) // Simulate ranking points
-        }));
-
-        thirdPlaceQualifiers = allThirdPlaces
+    function determineThirdPlace() {
+        thirdPlaceQualifiers = Object.entries(groups)
+            .map(([group, teams]) => ({
+                group,
+                team: teams[2],
+                points: Math.random() // Simulate ranking
+            }))
             .sort((a, b) => b.points - a.points)
             .slice(0, 4)
             .map(t => t.group);
     }
 
-    function initializeKnockoutMatches() {
-        const round16Matches = [
-            { type: 'winner', group: 'A', pos: 1 }, 
-            { type: 'third', group: 'C', pos: 3 },
-            { type: 'winner', group: 'B', pos: 1 }, 
-            { type: 'third', group: 'F', pos: 3 },
-            { type: 'winner', group: 'C', pos: 1 }, 
-            { type: 'third', group: 'A', pos: 3 },
-            { type: 'winner', group: 'D', pos: 1 }, 
-            { type: 'third', group: 'E', pos: 3 },
-            { type: 'winner', group: 'E', pos: 1 }, 
-            { type: 'third', group: 'D', pos: 3 },
-            { type: 'winner', group: 'F', pos: 1 }, 
-            { type: 'third', group: 'B', pos: 3 },
-            { type: 'runner', group: 'A', pos: 2 }, 
-            { type: 'runner', group: 'B', pos: 2 },
-            { type: 'runner', group: 'C', pos: 2 }, 
-            { type: 'runner', group: 'D', pos: 2 }
+    function createBracket() {
+        const bracket = document.querySelector('.bracket');
+        bracket.innerHTML = `
+            <div class="round">
+                <h3>Round of 16</h3>
+                <div class="matches">
+                    ${createRound16Matches()}
+                </div>
+            </div>
+            <div class="round">
+                <h3>Quarter-finals</h3>
+                <div class="matches">
+                    ${Array(4).fill().map(() => `
+                        <div class="match">
+                            <div class="team"></div>
+                            <div class="vs">vs</div>
+                            <div class="team"></div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+            <div class="round">
+                <h3>Semi-finals</h3>
+                <div class="matches">
+                    ${Array(2).fill().map(() => `
+                        <div class="match">
+                            <div class="team"></div>
+                            <div class="vs">vs</div>
+                            <div class="team"></div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+            <div class="round">
+                <h3>Final</h3>
+                <div class="matches">
+                    <div class="match final">
+                        <div class="team"></div>
+                        <div class="vs">vs</div>
+                        <div class="team"></div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    function createRound16Matches() {
+        const matches = [
+            ['A', 1, 'C', 3], ['B', 1, 'F', 3],
+            ['C', 1, 'A', 3], ['D', 1, 'E', 3],
+            ['E', 1, 'D', 3], ['F', 1, 'B', 3],
+            ['A', 2, 'B', 2], ['C', 2, 'D', 2]
         ];
+        
+        return matches.map(match => `
+            <div class="match">
+                <div class="team" data-group="${match[0]}" data-pos="${match[1]}">
+                    ${getTeam(match[0], match[1])}
+                </div>
+                <div class="vs">vs</div>
+                <div class="team" data-group="${match[2]}" data-pos="${match[3]}">
+                    ${getTeam(match[2], match[3])}
+                </div>
+            </div>
+        `).join('');
+    }
 
-        document.querySelectorAll('#knockout .match .team').forEach((teamEl, index) => {
-            const { type, group, pos } = round16Matches[index];
-            let teamName = '';
-            
-            if (type === 'third' && !thirdPlaceQualifiers.includes(group)) {
-                teamName = 'N/A';
-            } else {
-                teamName = groups[group][pos - 1];
-            }
-
-            teamEl.querySelector('.fi').className = `fi fi-${countryCodes[teamName] || 'xx'}`;
-            teamEl.childNodes[2].textContent = teamName;
-            teamEl.dataset.original = teamName;
-        });
+    function getTeam(group, pos) {
+        if (pos === 3 && !thirdPlaceQualifiers.includes(group)) return 'N/A';
+        const team = groups[group][pos - 1];
+        return `<span class="fi fi-${countryCodes[team]}"></span>${team}`;
     }
 
     function setupKnockoutListeners() {
-        document.querySelectorAll('.match .team').forEach(teamEl => {
-            teamEl.addEventListener('click', () => handleKnockoutSelection(teamEl));
+        document.querySelectorAll('.match .team').forEach(team => {
+            team.addEventListener('click', () => selectWinner(team));
         });
     }
 
-    function handleKnockoutSelection(selectedTeam) {
-        const match = selectedTeam.closest('.match');
+    function selectWinner(selected) {
+        const match = selected.closest('.match');
         const round = match.closest('.round');
         
-        match.querySelectorAll('.team').forEach(team => 
-            team.classList.remove('selected')
-        );
-        selectedTeam.classList.add('selected');
+        match.querySelectorAll('.team').forEach(t => t.classList.remove('selected'));
+        selected.classList.add('selected');
         
-        const winner = selectedTeam.dataset.original;
+        const winner = selected.textContent.trim();
         currentSelections.set(match, winner);
         
-        if (!round.nextElementSibling) {
-            declareChampion(winner);
-        } else {
+        if (round.nextElementSibling) {
             propagateWinner(round, match, winner);
+        } else {
+            showChampion(winner);
         }
     }
 
     function propagateWinner(round, match, winner) {
         const nextRound = round.nextElementSibling;
         const matchIndex = Array.from(round.querySelectorAll('.match')).indexOf(match);
-        const targetMatch = nextRound.querySelectorAll('.match')[Math.floor(matchIndex / 2)];
+        const nextMatch = nextRound.querySelectorAll('.match')[Math.floor(matchIndex / 2)];
         const slot = matchIndex % 2 === 0 ? 0 : 1;
         
-        const teamSlot = targetMatch.querySelectorAll('.team')[slot];
-        teamSlot.querySelector('.fi').className = `fi fi-${countryCodes[winner]}`;
-        teamSlot.childNodes[2].textContent = winner;
-        teamSlot.dataset.original = winner;
-    }
-
-    function declareChampion(winner) {
-        const finalMatch = document.querySelector('.match.final');
-        finalMatch.innerHTML = `
-            <div class="team champion">
-                <span class="fi fi-${countryCodes[winner]}"></span>
-                ${winner}
-            </div>
-            <div class="trophy">🏆</div>
+        const teamSlot = nextMatch.querySelectorAll('.team')[slot];
+        teamSlot.innerHTML = `
+            <span class="fi fi-${countryCodes[winner]}"></span>
+            ${winner}
         `;
     }
 
-    // General Event Listeners
-    function setupEventListeners() {
-        // Navigation
-        document.querySelectorAll('nav button').forEach(button => {
-            button.addEventListener('click', () => {
-                document.querySelector('.active-section').classList.remove('active-section');
-                document.getElementById(button.dataset.section).classList.add('active-section');
-                document.querySelector('.active').classList.remove('active');
-                button.classList.add('active');
-            });
-        });
-
-        // Reset Button
-        document.getElementById('reset').addEventListener('click', () => {
-            currentSelections.clear();
-            groupsLocked = false;
-            initializeTournament();
-            document.querySelector('[data-section="groups"]').click();
-        });
-
-        // Share Button
-        document.getElementById('share').addEventListener('click', async () => {
-            try {
-                const html2canvas = await import('https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js');
-                html2canvas.default(document.querySelector('.bracket')).then(canvas => {
-                    const link = document.createElement('a');
-                    link.download = 'afcon-bracket.png';
-                    link.href = canvas.toDataURL();
-                    link.click();
-                });
-            } catch (error) {
-                alert('Error generating share image');
-            }
-        });
-    }
-
-    // Start the tournament
-    initializeTournament();
-});
+    function showChampion(winner) {
+        const final = document.querySelector('.match.final');
+        final.innerHTML = `
+            <div class="
